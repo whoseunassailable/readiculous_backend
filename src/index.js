@@ -4,10 +4,10 @@ const cors = require('cors');
 
 // Import route files
 const userRoutes = require('./routes/userRoutes.js');
-// const genreRoutes = require('./routes/genreRoutes');
-// const userGenreRoutes = require('./routes/userGenreRoutes');
-// const bookRoutes = require('./routes/bookRoutes');
-// const bookGenreRoutes = require('./routes/bookGenreRoutes');
+const genreRoutes = require('./routes/genreRoutes');
+const userGenreRoutes = require('./routes/userGenreRoutes');
+const bookRoutes = require('./routes/bookRoutes');
+const bookGenreRoutes = require('./routes/bookGenreRoutes');
 // const ratingRoutes = require('./routes/ratingRoutes');
 
 // Middleware
@@ -27,6 +27,12 @@ app.get('/', (req, res) => {
 // app.use('/api/book-genres', bookGenreRoutes);
 // app.use('/api/ratings', ratingRoutes);
 app.use('/api', userRoutes);
+app.use('/api', genreRoutes);
+app.use('/api', userGenreRoutes);
+app.use('/api', bookGenreRoutes);
+app.use('/api', bookRoutes);
+
+genreRoutes
 
 
 // Start server
