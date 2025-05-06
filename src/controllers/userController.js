@@ -4,8 +4,8 @@ const saltRounds = 10;
 const {v4:uuidv4} = require("uuid")
 
 exports.createUser = async (req, res) => {
-  const { first_name, last_name, date_of_birth, email, phone, password } = req.body;
-  console.log(req)
+  const { first_name, last_name, date_of_birth, location, email, phone, password } = req.body;
+  // console.log(req)
 
   if (!first_name || !last_name || !email || !password) {
     return res.status(400).json({ message: 'Required fields missing' });
@@ -16,13 +16,25 @@ exports.createUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     await db.execute(
-      `INSERT INTO users (user_id, first_name, last_name, date_of_birth, email, phone, password)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [user_id, first_name, last_name, date_of_birth, email, phone, hashedPassword]
+      `INSERT INTO users (user_id, first_name, last_name, date_of_birth, location, email, phone, password)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [user_id, first_name, last_name, date_of_birth, location, email, phone, hashedPassword]
     );
 
-    res.status(201).json({ message: 'User created', user_id });
-  } catch (error) {
+    res.status(201).json({
+      message: 'User created',
+      data: {
+        student_id: user_id,
+        first_name: req.body.firstName,
+        last_name: req.body.lastName,
+        location: req.body.location,
+        email: req.body.email,
+        phone: req.body.phone,
+        date_of_birth: req.body.dateOfBirth,
+        password: req.body.password
+      }
+    });
+      } catch (error) {
     console.log(error);
     if (error.code === 'ER_DUP_ENTRY') {
       return res.status(409).json({ message: 'Email already exists' });
@@ -32,6 +44,27 @@ exports.createUser = async (req, res) => {
 };
 
 // Replace with a strong secret in your .env or config
+exports.deleteUser = async (req, res) => {
+  const { user_id } = req.params;
+
+  if (!user_id) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const [result] = await db.execute("DELETE FROM users WHERE user_id = ?", [user_id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
