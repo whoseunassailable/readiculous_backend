@@ -1,10 +1,3 @@
-# readiculous_backend
-Because every book needs a storage unit!
-
-Based on the project structure and metadata, here's a professional `README.md` draft for the **Readiculous Backend**:
-
----
-
 # 📚 Readiculous Backend
 
 **Because every book needs a storage unit!**
